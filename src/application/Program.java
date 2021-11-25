@@ -7,36 +7,35 @@ import java.sql.SQLException;
 import db.DB;
 
 public class Program {
-// Versão alternativa nao verbosa do programa
+// Atualizando dados na tabela
 	public static void main(String[] args) {
 
 		Connection conn = null;
 		PreparedStatement st = null;
 
 		try {
-			// Query a ser executada
-			String query = "insert into seller values (null,'Marcos Menezes','Marcos@gmail.com','1995/06/23','3600.00','2')";
-
-			// Inicia a conexão com o banco de dados, e executa a query 
-			conn = DB.getConnection();
-			st = conn.prepareStatement(query);
-
-			// Guarda o numero de rows afetadas
+			conn = DB.getConnection();//Conecta com o banco de dados
+			st = conn.prepareStatement(
+					 "UPDATE seller "
+					+"SET BaseSalary = BaseSalary + ? "//placeholder que receberá o valor a ser incrementado
+					+"WHERE (DepartmentId = ?)"//placeholder que receberá o id do departamento
+					);//Recebe a query
+			st.setDouble(1, 200.00);//Valor que será aplicado ao primeiro placeholder
+			st.setInt(2, 2);//Valor que será aplicado ao segundo placeholder
+			
 			int rows = st.executeUpdate();
-
-			// Verifica se alguma coluna foi afetada, e retorna uma String
-			String result = rows > 0 ? rows + " rows affecteds!" : rows + " rows affecteds!";
+			
+			String result = rows > 0 ? "Done! " + rows +" affected" : "No rows affected";
+			
 			System.out.println(result);
 		}
-
-		catch (SQLException e) {
-			e.getMessage();
+		catch(SQLException e) {
+			e.printStackTrace();
 		}
-
 		finally {
-			// Fecha as conexões
 			DB.closeStatement(st);
 			DB.closeConnection();
 		}
+		
 	}
 }
