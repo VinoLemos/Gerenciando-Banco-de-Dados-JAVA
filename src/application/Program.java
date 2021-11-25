@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import db.DB;
+import db.DbIntegrityException;
 
 public class Program {
 // Atualizando dados na tabela
@@ -16,12 +17,11 @@ public class Program {
 		try {
 			conn = DB.getConnection();//Conecta com o banco de dados
 			st = conn.prepareStatement(
-					 "UPDATE seller "
-					+"SET BaseSalary = BaseSalary + ? "//placeholder que receberá o valor a ser incrementado
-					+"WHERE (DepartmentId = ?)"//placeholder que receberá o id do departamento
+					"DELETE FROM department "
+					+ "WHERE Id = ?"
 					);//Recebe a query
-			st.setDouble(1, 200.00);//Valor que será aplicado ao primeiro placeholder
-			st.setInt(2, 2);//Valor que será aplicado ao segundo placeholder
+			st.setInt(1, 2);//Deleta todos os departamentos cujo Id seja igual ao segundo parametro passado
+
 			
 			int rows = st.executeUpdate();
 			
@@ -30,7 +30,7 @@ public class Program {
 			System.out.println(result);
 		}
 		catch(SQLException e) {
-			e.printStackTrace();
+			throw new DbIntegrityException(e.getMessage());
 		}
 		finally {
 			DB.closeStatement(st);
